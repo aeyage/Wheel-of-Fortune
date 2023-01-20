@@ -137,10 +137,7 @@ public class WheelOfFortune
 				
 				else {
 					fortuneBoard.setPendingPuzzle(playerGuess);
-				}
-			
-		
-						
+				}	
 				
 			}
 			
@@ -173,35 +170,40 @@ public class WheelOfFortune
 	
 	public static void main (String [] args) 
 	{
+		Scanner input = new Scanner(System.in);
+
 		//Prints welcome message
 		System.out.println("Welcome to the Wheel of Fortune\n");
+		System.out.println("How many players will be playing?");
+		int x = input.nextInt();
+
+		int value = x + 1;
+
+		Player player[] = new Player[value];
+
+		for(int i = 1; i < value; i++)
+		{
+			player[i] = new Player(i);
+		}
+
+		// //Creates 3 new players
+		// Player player1 = new Player(1);
+		// Player player2 = new Player(2);
+		// Player player3 = new Player(3);
 		
-		//Creates 3 new players
-		Player player1 = new Player(1);
-		Player player2 = new Player(2);
-		Player player3 = new Player(3);
-		
-		do {
-			displayBoard();
-			play(player1);
-			
-				if (checkSolved()==true)
-				break;
+		for (int j = 1; j < value; j++)
+		{
+			do {
+				displayBoard();
+				play(player[j]);
 				
-			displayBoard();	
-			play(player2);
-			
-				if (checkSolved()==true)
-				break;
-				
-			displayBoard();
-			play(player3);
-			
-				if (checkSolved()==true)
-				break;
-			
-		}while(checkSolved()==false);
+					if (checkSolved()==true)
+					break;
+					
+			}while(checkSolved()==false);
+		}
 		
+		input.close();
 		
 	}
 	
