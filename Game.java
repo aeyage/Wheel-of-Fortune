@@ -7,8 +7,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import java.util.Arrays;
 
-public class Keyboard extends JFrame implements ActionListener 
+
+public class Game extends JFrame implements ActionListener 
 {
     private String[] secretWord = {"T","H","E","  ",
                                     "S","E","C","R","E","T","  ",
@@ -23,10 +26,10 @@ public class Keyboard extends JFrame implements ActionListener
 
     private JLabel guessedWordLabel = new JLabel(" ");
 
-    public Keyboard() 
+    public Game() 
     {
         setTitle("Guess the Secret Word");
-        setSize(600, 300);
+        setSize(650, 300);
         JPanel keyboardPanel = new JPanel();
         keyboardPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -104,15 +107,16 @@ public class Keyboard extends JFrame implements ActionListener
         {
             button.setEnabled(false);
         }
-
-        if (guessedWord.equals("POOP"))
-        {
-            System.out.println("Congratulations! You guessed the secret word: Poop");
-        }
+        
+        if (Arrays.equals(guessedWord, secretWord)) {
+            JOptionPane.showMessageDialog(null, "Congratulations!", "You win!", JOptionPane.PLAIN_MESSAGE);
+        }        
+        
+         
     }
 
     public static void main (String [] args) 
 	{
-		new Keyboard();
+		new Game();
 	}
 }
