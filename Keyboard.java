@@ -10,8 +10,17 @@ import javax.swing.JPanel;
 
 public class Keyboard extends JFrame implements ActionListener 
 {
-    private String[] secretWord = {"P","O","O","P"};
-    private String[] guessedWord = {"_","_","_","_"};
+    private String[] secretWord = {"T","H","E",
+                                    "S","E","C","R","E","T",
+                                    "L","I","F","E",
+                                    "O","F",
+                                    "B","E","E","S"};
+    private String[] guessedWord = {"_","_","_","  ",
+                                    "_","_","_","_","_","_","  ",
+                                    "_","_","_","_","_","  ",
+                                    "_","_"," ",
+                                    "_","_","_","_"};
+
     private JLabel guessedWordLabel = new JLabel(" ");
 
     public Keyboard() 
@@ -47,7 +56,7 @@ public class Keyboard extends JFrame implements ActionListener
 
         add(keyboardPanel, "Center");
         add(guessedWordLabel, "North");
-        guessedWordLabel.setText("Guessed word: " + guessedWord);
+        guessedWordLabel.setText("Guessed word: " + String.join(" ", guessedWord));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
