@@ -10,15 +10,15 @@ import javax.swing.JPanel;
 
 public class Keyboard extends JFrame implements ActionListener 
 {
-    private String[] secretWord = {"T","H","E",
-                                    "S","E","C","R","E","T",
-                                    "L","I","F","E",
-                                    "O","F",
+    private String[] secretWord = {"T","H","E","  ",
+                                    "S","E","C","R","E","T","  ",
+                                    "L","I","F","E","  ",
+                                    "O","F","  ",
                                     "B","E","E","S"};
     private String[] guessedWord = {"_","_","_","  ",
                                     "_","_","_","_","_","_","  ",
-                                    "_","_","_","_","_","  ",
-                                    "_","_"," ",
+                                    "_","_","_","_","  ",
+                                    "_","_","  ",
                                     "_","_","_","_"};
 
     private JLabel guessedWordLabel = new JLabel(" ");
