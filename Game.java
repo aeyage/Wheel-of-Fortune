@@ -9,7 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import java.util.Arrays;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game extends JFrame implements ActionListener 
 {
@@ -41,19 +42,22 @@ public class Game extends JFrame implements ActionListener
             {" ","A", "S", "D", "F", "G", "H", "J", "K", "L"," "},
             {" ", " ", "Z", "X", "C", "V", "B", "N", "M"}
             };
+        
+        JButton[] buttons = new JButton[keys.length*keys[0].length];
 
-        for (int i = 0; i < keys.length; i++) 
-        {
-            for (int j = 0; j < keys[i].length; j++) 
-            {
-                JButton button = new JButton(keys[i][j]);
+        int count = 0;
+        for (int i = 0; i < keys.length; i++) {
+            for (int j = 0; j < keys[i].length; j++) {
+                buttons[count] = new JButton(keys[i][j]);
                 if(keys[i][j] == " "){
-                    button.setVisible(false);
+                   buttons[count].setVisible(false);
                 }
-                button.addActionListener(this);
+                buttons[count].addActionListener(this);
+                buttons[count].setEnabled(false);
                 c.gridx = j;
                 c.gridy = i;
-                keyboardPanel.add(button, c);
+                keyboardPanel.add(buttons[count], c);
+                count++;
             }
         }
 
@@ -65,26 +69,57 @@ public class Game extends JFrame implements ActionListener
         setVisible(true);
 
         // a close button
-        JButton closeButton = new JButton("Close");
-        closeButton.setBounds(500, 250, 75, 25);
-        keyboardPanel.add(closeButton);
+        // JButton closeButton = new JButton("Close");
+        // closeButton.setBounds(500, 250, 75, 25);
+        // keyboardPanel.add(closeButton);
 
-        closeButton.addActionListener(new ActionListener() 
-        {
-            public void actionPerformed(ActionEvent e) 
-            {
-                setVisible(false); // hide the GUI
-                dispose(); // release resources used by the GUI
-            }
-        });
-    }
+        // closeButton.addActionListener(new ActionListener() 
+        // {
+        //     public void actionPerformed(ActionEvent e) 
+        //     {
+        //         setVisible(false); // hide the GUI
+        //         dispose(); // release resources used by the GUI
+        //     }
+        // });
+
+        JButton spinButton = new JButton("SPIN");
+        spinButton.setBounds(500, 250, 75, 25);
+        keyboardPanel.add(spinButton);
+        
+        List<String> guessedAlphabet = new ArrayList<>();
+
+        spinButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                // List<String> guessedAlphabet = new ArrayList<>();
+
+                for (int j = 0; j < secretWord.length; j++) {
+                    if (!guessedWord[j].equals("  ") || !guessedWord[j].equals("_"))
+                    {
+                        guessedAlphabet.add(guessedWord[j]);
+                    }
+                }
+
+                for (int j = 0; j < buttons.length; j++) {
+                    boolean isDisabled = false;
+                    for(int i = 0; i < guessedAlphabet.size(); i++){
+                        if(buttons[j].getText().equals(guessedAlphabet.get(i))){
+                            isDisabled = true;
+                            break;
+                        }
+                    }
+                    buttons[j].setEnabled(!isDisabled);
+                }
+                }     
+            });
+        }
 
     public void actionPerformed(ActionEvent e) 
     {
         JButton button = (JButton) e.getSource();
         String pressedButton = button.getText();
         boolean isCorrect = false;
-
+        
         for (int i = 0; i < secretWord.length; i++)
         {
             if (pressedButton == secretWord[i])
@@ -112,7 +147,6 @@ public class Game extends JFrame implements ActionListener
             JOptionPane.showMessageDialog(null, "Congratulations!", "You win!", JOptionPane.PLAIN_MESSAGE);
         }        
         
-         
     }
 
     public static void main (String [] args) 
