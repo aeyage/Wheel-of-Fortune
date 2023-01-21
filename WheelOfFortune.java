@@ -31,7 +31,7 @@ public class WheelOfFortune
 		 *the puzzle is not yet solved. It will not execute if either the players turn has ended OR
 		 *the puzzle was solved during the players turn
 		 */
-		while (goAgain==true && puzzleSolved==false)
+		while (goAgain && !puzzleSolved)
 		{
 			
 			boolean wasGuessed=false;
@@ -63,9 +63,9 @@ public class WheelOfFortune
 					
 				}
 				
-			}while(playerChoice != 1 && playerChoice!=2);
+			} while(playerChoice != 1 && playerChoice!=2);
 			
-			if(playerChoice == 1)
+			if (playerChoice == 1)
 			{
 				//Spins the wheel
 				fortuneWheel.spin();
@@ -90,7 +90,7 @@ public class WheelOfFortune
 						//Checks that the letter has not been guessed
 						wasGuessed = fortuneBoard.isLetterGuessed(player.getPlayerGuess());
 						
-					}while (wasGuessed);
+					} while (wasGuessed);
 					
 					/* Play the current letter on the board. 
 					 * The validity of the letter has not been checked at this point
@@ -107,16 +107,16 @@ public class WheelOfFortune
 					 * If the player guesses a letter that is in the puzzle, player can go again
 					 * else the player's turn terminates
 					 */
-					if (fortuneBoard.isLetterInPuzzle(player.getPlayerGuess())==true)
+					if (fortuneBoard.isLetterInPuzzle(player.getPlayerGuess()))
 						displayBoard();
-					else {
-						goAgain=false;
+					else 
+					{
+						goAgain = false;
 						System.out.println("Incorrect!");
 						System.out.println();
 					}
 	
 				}
-				
 				else
 				{
 					//If wheel value is less than 0, turn terminates
@@ -135,7 +135,8 @@ public class WheelOfFortune
 					goAgain = false;
 				}
 				
-				else {
+				else 
+				{
 					fortuneBoard.setPendingPuzzle(playerGuess);
 				}	
 				
@@ -144,10 +145,10 @@ public class WheelOfFortune
 			/*Checks whether the puzzle has been solved
 			 *Prints congratulatory message if puzzle is solved and terminates turn
 			 */
-			if(checkSolved()==true)
+			if (checkSolved())
 			{
 				
-				goAgain=false;
+				goAgain = false;
 				System.out.println("Congratulations! You Solved the Puzzle!\n"+
 							"Player " + player.getPlayerNumber()+ " Wins!");
 			}
@@ -158,19 +159,14 @@ public class WheelOfFortune
 	public static boolean checkSolved()
 	{
 		boolean solved;
-		if (fortuneBoard.getPendingPuzzle().equalsIgnoreCase(fortuneBoard.getPuzzle())) {
-			solved = true;
-			
-		}
-		else
-			solved =  false;
+		solved = fortuneBoard.getPendingPuzzle().equalsIgnoreCase(fortuneBoard.getPuzzle());
 		
 		return solved;
 	}
 	
 	public static void main (String [] args) 
 	{
-		Scanner input = new Scanner(System.in);
+		Scanner input = new Scanner (System.in);
 
 		//Prints welcome message
 		System.out.println("Welcome to the Wheel of Fortune\n");
@@ -179,9 +175,9 @@ public class WheelOfFortune
 
 		int value = x + 1;
 
-		Player player[] = new Player[value];
+		Player[] player = new Player[value];
 
-		for(int i = 1; i < value; i++)
+		for (int i = 1; i < value; i++)
 		{
 			player[i] = new Player(i);
 		}
@@ -193,19 +189,17 @@ public class WheelOfFortune
 		
 		for (int j = 1; j < value; j++)
 		{
-			do {
+			do 
+			{
 				displayBoard();
 				play(player[j]);
 				
-					if (checkSolved()==true)
-					break;
+					if (checkSolved())
+						break;
 					
-			}while(checkSolved()==false);
+			} while(!checkSolved());
 		}
-		
 		input.close();
-		
 	}
-	
 	
 }
