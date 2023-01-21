@@ -9,12 +9,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Keyboard extends JFrame implements ActionListener {
+public class Keyboard extends JFrame implements ActionListener 
+{
     private String[] secretWord = {"P","O","O","P"};
     private String[] guessedWord = {" "," "," "," "};
     private JLabel guessedWordLabel = new JLabel(" ");
 
-    public Keyboard() {
+    public Keyboard() 
+    {
         setTitle("Guess the Secret Word");
         setSize(600, 300);
         JPanel keyboardPanel = new JPanel();
@@ -27,10 +29,12 @@ public class Keyboard extends JFrame implements ActionListener {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
             {"Z", "X", "C", "V", "B", "N", "M"}
-    };
+            };
 
-        for (int i = 0; i < keys.length; i++) {
-            for (int j = 0; j < keys[i].length; j++) {
+        for (int i = 0; i < keys.length; i++) 
+        {
+            for (int j = 0; j < keys[i].length; j++) 
+            {
                 JButton button = new JButton(keys[i][j]);
                 button.addActionListener(this);
                 c.gridx = j;
@@ -45,17 +49,35 @@ public class Keyboard extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        // a close button
+        JButton closeButton = new JButton("Close");
+        closeButton.setBounds(500, 250, 75, 25);
+        keyboardPanel.add(closeButton);
+
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false); // hide the GUI
+                dispose(); // release resources used by the GUI
+            }
+        });
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) 
+    {
         JButton button = (JButton) e.getSource();
         String pressedButton = button.getText();
         boolean isCorrect = false;
-        for(int i = 0; i < secretWord.length; i++){
-            if(pressedButton == secretWord[i]){
+
+        for (int i = 0; i < secretWord.length; i++)
+        {
+            if (pressedButton == secretWord[i])
+            {
                 isCorrect = true;
-                for(int j = 0; j < secretWord.length; j++){
-                    if(pressedButton == secretWord[j]){
+                for (int j = 0; j < secretWord.length; j++)
+                {
+                    if (pressedButton == secretWord[j])
+                    {
                         guessedWord[j] = pressedButton;
                     } 
                 }
@@ -64,11 +86,15 @@ public class Keyboard extends JFrame implements ActionListener {
                 break;
             }
         }
-        if(!isCorrect){
+        
+        if (!isCorrect)
+        {
             button.setEnabled(false);
             button.setBackground(Color.RED);
         }
-        if(guessedWord.equals("POOP")){
+
+        if (guessedWord.equals("POOP"))
+        {
             System.out.println("Congratulations! You guessed the secret word: Poop");
         }
     }
@@ -76,5 +102,4 @@ public class Keyboard extends JFrame implements ActionListener {
 	// {
 	// 	new Keyboard();
 	// }
-
 }
