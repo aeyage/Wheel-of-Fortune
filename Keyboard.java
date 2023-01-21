@@ -55,8 +55,10 @@ public class Keyboard extends JFrame implements ActionListener
         closeButton.setBounds(500, 250, 75, 25);
         keyboardPanel.add(closeButton);
 
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        closeButton.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {
                 setVisible(false); // hide the GUI
                 dispose(); // release resources used by the GUI
             }
@@ -86,7 +88,7 @@ public class Keyboard extends JFrame implements ActionListener
                 break;
             }
         }
-        
+
         if (!isCorrect)
         {
             button.setEnabled(false);
