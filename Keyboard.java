@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -12,7 +11,7 @@ import javax.swing.JPanel;
 public class Keyboard extends JFrame implements ActionListener 
 {
     private String[] secretWord = {"P","O","O","P"};
-    private String[] guessedWord = {" "," "," "," "};
+    private String[] guessedWord = {"_","_","_","_"};
     private JLabel guessedWordLabel = new JLabel(" ");
 
     public Keyboard() 
@@ -27,8 +26,8 @@ public class Keyboard extends JFrame implements ActionListener
 
         String[][] keys = {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
-            {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
-            {"Z", "X", "C", "V", "B", "N", "M"}
+            {" ","A", "S", "D", "F", "G", "H", "J", "K", "L"," "},
+            {" ", " ", "Z", "X", "C", "V", "B", "N", "M"}
             };
 
         for (int i = 0; i < keys.length; i++) 
@@ -36,6 +35,9 @@ public class Keyboard extends JFrame implements ActionListener
             for (int j = 0; j < keys[i].length; j++) 
             {
                 JButton button = new JButton(keys[i][j]);
+                if(keys[i][j] == " "){
+                    button.setVisible(false);
+                }
                 button.addActionListener(this);
                 c.gridx = j;
                 c.gridy = i;
@@ -84,7 +86,7 @@ public class Keyboard extends JFrame implements ActionListener
                     } 
                 }
                 guessedWordLabel.setText("Guessed word: " + String.join(" ", guessedWord));
-                button.setBackground(Color.GREEN);
+                button.setEnabled(false);
                 break;
             }
         }
@@ -92,7 +94,6 @@ public class Keyboard extends JFrame implements ActionListener
         if (!isCorrect)
         {
             button.setEnabled(false);
-            button.setBackground(Color.RED);
         }
 
         if (guessedWord.equals("POOP"))
@@ -100,8 +101,9 @@ public class Keyboard extends JFrame implements ActionListener
             System.out.println("Congratulations! You guessed the secret word: Poop");
         }
     }
-    // public static void main (String [] args) 
-	// {
-	// 	new Keyboard();
-	// }
+
+    public static void main (String [] args) 
+	{
+		new Keyboard();
+	}
 }
