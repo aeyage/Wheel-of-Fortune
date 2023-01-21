@@ -187,19 +187,19 @@ public class WheelOfFortune
 		// Player player2 = new Player(2);
 		// Player player3 = new Player(3);
 		
-		for (int j = 1; j < value; j++)
+		do
 		{
-			do 
+			for (int j = 1; j < value; j++)
 			{
 				displayBoard();
 				play(player[j]);
 				
 					if (checkSolved())
 						break;
-					
-			} while(!checkSolved());
-		}
-		input.close();
+			}
+			input.close();
+
+	} while(!checkSolved());
 	}
 	
 }
