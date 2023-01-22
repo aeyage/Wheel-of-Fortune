@@ -38,6 +38,6 @@ Player 1 - would you like to Spin (1) or Guess (2) the puzzle?
 
 *NOTE: Does not yet include a system to buy vowels. All letters can be guessed to gain money*
 
-*NOTE: For CAT201 project, we did not manage to design the end product correctly. We add two new features which are in Game.java file and WheelOfFortune.java file. The game currently can be run from Game.java file (to get the GUI feature) and WheelOfFortune.java file (to get the choices number of players feature). 
+*NOTE: For CAT201 project, we did not manage to design the end product correctly. We add two new features which are in Game.java file and WheelOfFortune.java file. The game currently can be run from Game.java file (to get the GUI feature) and WheelOfFortune.java file (to get the choices number of players feature).* 
 
 *Under Construction*
