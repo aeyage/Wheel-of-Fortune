@@ -1,13 +1,15 @@
 # WHEEL
 
-**This beginner-level java project recreates the classic game of Wheel of Fortune. It consisits of 3
- players, underscores/dashes to represent letters in the puzzle, and available letters.**
+**This beginner-level java project recreates the classic game of Wheel of Fortune. It consists of one to many
+ players, Keyboard and letters GUI, underscores/dashes to represent letters in the puzzle, and available letters.**
 
 
 
 ## INITIAL SCREEN
 
 Welcome to the Wheel of Fortune
+
+How many players will be playing?
 
 Available Letters - ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
@@ -35,5 +37,7 @@ Player 1 - would you like to Spin (1) or Guess (2) the puzzle?
 *NOTE: My puzzle is "The Secret Life of Bees"*
 
 *NOTE: Does not yet include a system to buy vowels. All letters can be guessed to gain money*
+
+*NOTE: For CAT201 project, we did not manage to design the end product correctly. We add two new features which are in Game.java file and WheelOfFortune.java file. The game currently can be run from Game.java file (to get the GUI feature) and WheelOfFortune.java file (to get the choices number of players feature). 
 
 *Under Construction*
