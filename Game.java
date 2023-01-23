@@ -72,26 +72,26 @@ public class Game extends JFrame implements ActionListener
         spinButton.setBounds(500, 250, 75, 25);
         keyboardPanel.add(spinButton);
         
-        List<String> guessedAlphabet = new ArrayList<>();
+        List<String> pressedAlphabets = new ArrayList<>();
 
         spinButton.addActionListener(new ActionListener() 
         {
             public void actionPerformed(ActionEvent e) 
             {
-                for (int j = 0; j < secretWord.length; j++) 
-                {
-                    if (!guessedWord[j].equals("  ") || !guessedWord[j].equals("_"))
-                    {
-                        guessedAlphabet.add(guessedWord[j]);
-                    }
-                }
+                // for (int j = 0; j < secretWord.length; j++) 
+                // {
+                //     if (!guessedWord[j].equals("  ") || !guessedWord[j].equals("_"))
+                //     {
+                //         pressedAlphabets.add(guessedWord[j]);
+                //     }
+                // }
 
                 for (int j = 0; j < buttons.length; j++) 
                 {
                     boolean isDisabled = false;
-                    for(int i = 0; i < guessedAlphabet.size(); i++)
+                    for(int i = 0; i < pressedAlphabets.size(); i++)
                     {
-                        if(buttons[j].getText().equals(guessedAlphabet.get(i)))
+                        if(buttons[j].getText().equals(pressedAlphabets.get(i)))
                         {
                             isDisabled = true;
                             break;
@@ -112,7 +112,9 @@ public class Game extends JFrame implements ActionListener
                     JButton button = (JButton) e.getSource();
                     String pressedButton = button.getText();
                     boolean isCorrect = false;
-                
+                    
+                    pressedAlphabets.add(pressedButton);
+
                     for (int i = 0; i < secretWord.length; i++)
                     {
                         if (pressedButton == secretWord[i])
