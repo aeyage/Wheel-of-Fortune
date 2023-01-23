@@ -138,9 +138,14 @@ public class Game extends JFrame implements ActionListener
                 
                     if (Arrays.equals(guessedWord, secretWord)) {
                         JOptionPane.showMessageDialog(null, "Congratulations!", "You win!", JOptionPane.PLAIN_MESSAGE);
-                    }    
+                    }
+                    
+                    for (int j = 0; j < buttons.length; j++)
+                    {
+                        buttons[j].setEnabled(false);  
+                    }
                     spinButton.setEnabled(true); 
-                }
+                } 
             });
         }
     }
