@@ -68,7 +68,97 @@ public class Game extends JFrame implements ActionListener
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        // a close button
+        JButton spinButton = new JButton("SPIN");
+        spinButton.setBounds(500, 250, 75, 25);
+        keyboardPanel.add(spinButton);
+        
+        List<String> guessedAlphabet = new ArrayList<>();
+
+        spinButton.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {
+                for (int j = 0; j < secretWord.length; j++) 
+                {
+                    if (!guessedWord[j].equals("  ") || !guessedWord[j].equals("_"))
+                    {
+                        guessedAlphabet.add(guessedWord[j]);
+                    }
+                }
+
+                for (int j = 0; j < buttons.length; j++) 
+                {
+                    boolean isDisabled = false;
+                    for(int i = 0; i < guessedAlphabet.size(); i++)
+                    {
+                        if(buttons[j].getText().equals(guessedAlphabet.get(i)))
+                        {
+                            isDisabled = true;
+                            break;
+                        }
+                    }
+                    buttons[j].setEnabled(!isDisabled);
+                }
+                spinButton.setEnabled(false);
+            }     
+        });
+
+        for (int i = 0; i < buttons.length; i++) 
+        {
+            buttons[i].addActionListener(new ActionListener() 
+            {
+                public void actionPerformed(ActionEvent e) 
+                {
+                    JButton button = (JButton) e.getSource();
+                    String pressedButton = button.getText();
+                    boolean isCorrect = false;
+                
+                    for (int i = 0; i < secretWord.length; i++)
+                    {
+                        if (pressedButton == secretWord[i])
+                        {
+                            isCorrect = true;
+                            for (int j = 0; j < secretWord.length; j++)
+                            {
+                                if (pressedButton == secretWord[j])
+                                {
+                                    guessedWord[j] = pressedButton;
+                                } 
+                            }
+                            guessedWordLabel.setText("Guessed word: " + String.join(" ", guessedWord));
+                            button.setEnabled(false);
+                            break;
+                        }  
+                    }
+        
+                    if (!isCorrect)
+                    {
+                        button.setEnabled(false);
+                    }
+                
+                    if (Arrays.equals(guessedWord, secretWord)) {
+                        JOptionPane.showMessageDialog(null, "Congratulations!", "You win!", JOptionPane.PLAIN_MESSAGE);
+                    }    
+                    spinButton.setEnabled(true); 
+                }
+            });
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) 
+    {
+
+    }
+
+    public static void main (String [] args) 
+	{
+		new Game();
+	}
+    
+}
+
+
+   // a close button
         // JButton closeButton = new JButton("Close");
         // closeButton.setBounds(500, 250, 75, 25);
         // keyboardPanel.add(closeButton);
@@ -81,76 +171,3 @@ public class Game extends JFrame implements ActionListener
         //         dispose(); // release resources used by the GUI
         //     }
         // });
-
-        JButton spinButton = new JButton("SPIN");
-        spinButton.setBounds(500, 250, 75, 25);
-        keyboardPanel.add(spinButton);
-        
-        List<String> guessedAlphabet = new ArrayList<>();
-
-        spinButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-                // List<String> guessedAlphabet = new ArrayList<>();
-
-                for (int j = 0; j < secretWord.length; j++) {
-                    if (!guessedWord[j].equals("  ") || !guessedWord[j].equals("_"))
-                    {
-                        guessedAlphabet.add(guessedWord[j]);
-                    }
-                }
-
-                for (int j = 0; j < buttons.length; j++) {
-                    boolean isDisabled = false;
-                    for(int i = 0; i < guessedAlphabet.size(); i++){
-                        if(buttons[j].getText().equals(guessedAlphabet.get(i))){
-                            isDisabled = true;
-                            break;
-                        }
-                    }
-                    buttons[j].setEnabled(!isDisabled);
-                }
-                }     
-            });
-        }
-
-    public void actionPerformed(ActionEvent e) 
-    {
-        JButton button = (JButton) e.getSource();
-        String pressedButton = button.getText();
-        boolean isCorrect = false;
-        
-        for (int i = 0; i < secretWord.length; i++)
-        {
-            if (pressedButton == secretWord[i])
-            {
-                isCorrect = true;
-                for (int j = 0; j < secretWord.length; j++)
-                {
-                    if (pressedButton == secretWord[j])
-                    {
-                        guessedWord[j] = pressedButton;
-                    } 
-                }
-                guessedWordLabel.setText("Guessed word: " + String.join(" ", guessedWord));
-                button.setEnabled(false);
-                break;
-            }
-        }
-
-        if (!isCorrect)
-        {
-            button.setEnabled(false);
-        }
-        
-        if (Arrays.equals(guessedWord, secretWord)) {
-            JOptionPane.showMessageDialog(null, "Congratulations!", "You win!", JOptionPane.PLAIN_MESSAGE);
-        }        
-        
-    }
-
-    public static void main (String [] args) 
-	{
-		new Game();
-	}
-}
