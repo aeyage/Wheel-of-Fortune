@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.BorderLayout;
+
 
 public class Game extends JFrame implements ActionListener 
 {
@@ -25,18 +27,21 @@ public class Game extends JFrame implements ActionListener
                                     "_","_","  ",
                                     "_","_","_","_"};
 
+    private JLabel player1Label = new JLabel(" ");
     private JLabel guessedWordLabel = new JLabel(" ");
 
     public Game() 
     {
+
         setTitle("Guess the Secret Word");
         setSize(650, 300);
+        setLayout(new BorderLayout());
+
         JPanel keyboardPanel = new JPanel();
         keyboardPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5, 5, 5, 5);
         c.fill = GridBagConstraints.BOTH;
-
         String[][] keys = {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {" ","A", "S", "D", "F", "G", "H", "J", "K", "L"," "},
@@ -61,9 +66,15 @@ public class Game extends JFrame implements ActionListener
             }
         }
 
-        add(keyboardPanel, "Center");
-        add(guessedWordLabel, "North");
-        guessedWordLabel.setText("Guessed word: " + String.join(" ", guessedWord));
+        guessedWordLabel.setText(String.join(" ", guessedWord));
+        guessedWordLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(guessedWordLabel, BorderLayout.CENTER);
+        
+        player1Label.setText("Player 1 :     ");
+        add(player1Label, BorderLayout.NORTH);
+        player1Label.setHorizontalAlignment(JLabel.RIGHT);
+        add(keyboardPanel, BorderLayout.SOUTH);
+
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -78,14 +89,6 @@ public class Game extends JFrame implements ActionListener
         {
             public void actionPerformed(ActionEvent e) 
             {
-                // for (int j = 0; j < secretWord.length; j++) 
-                // {
-                //     if (!guessedWord[j].equals("  ") || !guessedWord[j].equals("_"))
-                //     {
-                //         pressedAlphabets.add(guessedWord[j]);
-                //     }
-                // }
-
                 for (int j = 0; j < buttons.length; j++) 
                 {
                     boolean isDisabled = false;
@@ -127,7 +130,7 @@ public class Game extends JFrame implements ActionListener
                                     guessedWord[j] = pressedButton;
                                 } 
                             }
-                            guessedWordLabel.setText("Guessed word: " + String.join(" ", guessedWord));
+                            guessedWordLabel.setText(String.join(" ", guessedWord));
                             button.setEnabled(false);
                             break;
                         }  
