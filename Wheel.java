@@ -15,7 +15,7 @@ public class Wheel
 	private int wheelValue(int spot)
 	{
 		int [] wheelValues = {100, 200, 300, 250, 350,
-									150, -200, -50, -100, 0};
+									150, 50, 50, -100, 0};
 		
 		return wheelValues[spot];
 	}

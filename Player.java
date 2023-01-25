@@ -25,11 +25,21 @@ public class Player {
 		return playerGuess;
 	}
 	
-	public void setTotal(int totalb)
+	public void setTotal(int b)
 	{
-		total += totalb;
+		if(b == -100)
+		{
+			total = 0;
+		} else 
+		{
+			total += b;
+		}
 	}
 
+	public void revertTotal(int a)
+	{
+		total = total - a;
+	}
 	public int getTotal()
 	{
 		return total;

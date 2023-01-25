@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.BorderLayout;
-// import java.util.*;
-
+import java.awt.Component;
+import javax.swing.BoxLayout;
 
 public class Game extends JFrame implements ActionListener 
 {
@@ -30,9 +30,14 @@ public class Game extends JFrame implements ActionListener
                                     "_","_","_","_"};
 
     private JLabel player1Label = new JLabel(" ");
+    private JLabel player2Label = new JLabel(" ");
     private JLabel guessedWordLabel = new JLabel(" ");
+    private JLabel turnLabel = new JLabel("");
+    private boolean player1turn = true;
+    private int spinValue;
 
     Player player1 = new Player(1);
+    Player player2 = new Player(2);
     Wheel fortuneWheel = new Wheel();
 
     public Game() 
@@ -46,20 +51,24 @@ public class Game extends JFrame implements ActionListener
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5, 5, 5, 5);
         c.fill = GridBagConstraints.BOTH;
-        String[][] keys = {
+        String[][] keys = 
+        {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {" ","A", "S", "D", "F", "G", "H", "J", "K", "L"," "},
             {" ", " ", "Z", "X", "C", "V", "B", "N", "M"}
-            };
+        };
         
         JButton[] buttons = new JButton[keys.length*keys[0].length];
 
         int count = 0;
-        for (int i = 0; i < keys.length; i++) {
-            for (int j = 0; j < keys[i].length; j++) {
+        for (int i = 0; i < keys.length; i++) 
+        { 
+            for (int j = 0; j < keys[i].length; j++) 
+            {
                 buttons[count] = new JButton(keys[i][j]);
-                if(keys[i][j] == " "){
-                   buttons[count].setVisible(false);
+                if(keys[i][j] == " ")
+                {
+                    buttons[count].setVisible(false);
                 }
                 buttons[count].addActionListener(this);
                 buttons[count].setEnabled(false);
@@ -67,18 +76,31 @@ public class Game extends JFrame implements ActionListener
                 c.gridy = i;
                 keyboardPanel.add(buttons[count], c);
                 count++;
-            }
+                }
         }
-
+        
         guessedWordLabel.setText(String.join(" ", guessedWord));
         guessedWordLabel.setHorizontalAlignment(JLabel.CENTER);
         add(guessedWordLabel, BorderLayout.CENTER);
         
-        player1Label.setText("Player 1 : " + player1.getTotal());
-        add(player1Label, BorderLayout.NORTH);
-        player1Label.setHorizontalAlignment(JLabel.RIGHT);
-        add(keyboardPanel, BorderLayout.SOUTH);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
+        player1Label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        player2Label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        turnLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        topPanel.add(player1Label);
+        topPanel.add(player2Label);
+        topPanel.add(turnLabel);
+
+        add(topPanel, BorderLayout.NORTH);
+        player1Label.setText("Player 1 :   " + player1.getTotal() + "        ");
+        player2Label.setText("Player 2 :   " + player2.getTotal() + "        ");
+        turnLabel.setText("Player 1's Turn");
+        
+        add(keyboardPanel, BorderLayout.SOUTH);
+        
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -92,27 +114,88 @@ public class Game extends JFrame implements ActionListener
         spinButton.addActionListener(new ActionListener() 
         {
             public void actionPerformed(ActionEvent e) 
-            {   
+            {                   
 
                 fortuneWheel.spin();
-                int spinValue = fortuneWheel.getWheelValue();
-                player1.setTotal(spinValue);
-                player1Label.setText("Player 1 : " + player1.getTotal());
+                spinValue = fortuneWheel.getWheelValue();
 
-                for (int j = 0; j < buttons.length; j++) 
-                {
-                    boolean isDisabled = false;
-                    for(int i = 0; i < pressedAlphabets.size(); i++)
+                if(player1turn)
+                {   
+                    if(spinValue == 0)
                     {
-                        if(buttons[j].getText().equals(pressedAlphabets.get(i)))
+                        JOptionPane.showMessageDialog(null, "Player 1 lose a turn!","Uh Oh!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        player1turn = false;
+                        turnLabel.setText("Player 2's Turn");
+                    } else if(spinValue == -100) 
+                    {
+                        player1.setTotal(-100);
+                        JOptionPane.showMessageDialog(null, "Player 1 hit bankruptcy!","Oh No!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        player1turn = false;
+                        player1Label.setText("Player 1 : " + player1.getTotal() + "   ");
+                        turnLabel.setText("Player 2's Turn");
+                    } else 
+                    {
+                        player1.setTotal(spinValue);
+                        player1Label.setText("Player 1 : " + player1.getTotal() + "   ");
+                        player1turn = false;
+
+                        for (int j = 0; j < buttons.length; j++) 
                         {
-                            isDisabled = true;
-                            break;
+                            boolean isDisabled = false;
+                            for(int i = 0; i < pressedAlphabets.size(); i++)
+                            {
+                                if(buttons[j].getText().equals(pressedAlphabets.get(i)))
+                                {
+                                    isDisabled = true;
+                                    break;
+                                }
+                            }
+                            buttons[j].setEnabled(!isDisabled);
                         }
+                        spinButton.setEnabled(false);
                     }
-                    buttons[j].setEnabled(!isDisabled);
+        
+                } else 
+                {
+                    if(spinValue == 0)
+                    {
+                        JOptionPane.showMessageDialog(null, "Player 2 lose a turn!","OH NO!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        player1turn = true;
+                        turnLabel.setText("Player 1's Turn");
+                    } else if(spinValue == -100) 
+                    {
+                        player2.setTotal(-100);
+                        JOptionPane.showMessageDialog(null, "Player 2 hit bankruptcy!","Oh No!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        player1turn = true;
+                        player2Label.setText("Player 2 : " + player2.getTotal() + "   ");
+                        turnLabel.setText("Player 1's Turn");
+                    } else 
+                    {
+                        player2.setTotal(spinValue);
+                        player2Label.setText("Player 2 : " + player2.getTotal() + "   ");
+                        player1turn = true;
+
+                        for (int j = 0; j < buttons.length; j++) 
+                        {
+                            boolean isDisabled = false;
+                            for(int i = 0; i < pressedAlphabets.size(); i++)
+                            {
+                                if(buttons[j].getText().equals(pressedAlphabets.get(i)))
+                                {
+                                    isDisabled = true;
+                                    break;
+                                }
+                            }
+                            buttons[j].setEnabled(!isDisabled);
+                        }
+                        spinButton.setEnabled(false);
+                    }
                 }
-                spinButton.setEnabled(false);
+
             }     
         });
 
@@ -122,6 +205,12 @@ public class Game extends JFrame implements ActionListener
             {
                 public void actionPerformed(ActionEvent e) 
                 {
+                    if (player1turn) {
+                        turnLabel.setText("Player 1's Turn");
+                    } else {
+                        turnLabel.setText("Player 2's Turn");
+                    } 
+
                     JButton button = (JButton) e.getSource();
                     String pressedButton = button.getText();
                     boolean isCorrect = false;
@@ -148,11 +237,27 @@ public class Game extends JFrame implements ActionListener
         
                     if (!isCorrect)
                     {
-                        button.setEnabled(false);
+                        if(!player1turn)
+                        {
+                            player1.revertTotal(spinValue);
+                            player1Label.setText("Player 1 : " + player1.getTotal() + "   ");
+                        } else
+                        {
+                            player2.revertTotal(spinValue);
+                            player2Label.setText("Player 2 : " + player2.getTotal() + "   ");
+                        }
                     }
                 
-                    if (Arrays.equals(guessedWord, secretWord)) {
-                        JOptionPane.showMessageDialog(null, "Congratulations!", "You win!", JOptionPane.PLAIN_MESSAGE);
+                    if (Arrays.equals(guessedWord, secretWord)) 
+                    {
+                        if(player1turn)
+                        {
+                            JOptionPane.showMessageDialog(null, "Player 1 wins!", "Congratulations!", 
+                            JOptionPane.PLAIN_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Player 2 wins!", "Congratulations!", 
+                            JOptionPane.PLAIN_MESSAGE);
+                        }
                     }
                     
                     for (int j = 0; j < buttons.length; j++)
@@ -176,18 +281,3 @@ public class Game extends JFrame implements ActionListener
 	}
     
 }
-
-
-   // a close button
-        // JButton closeButton = new JButton("Close");
-        // closeButton.setBounds(500, 250, 75, 25);
-        // keyboardPanel.add(closeButton);
-
-        // closeButton.addActionListener(new ActionListener() 
-        // {
-        //     public void actionPerformed(ActionEvent e) 
-        //     {
-        //         setVisible(false); // hide the GUI
-        //         dispose(); // release resources used by the GUI
-        //     }
-        // });
