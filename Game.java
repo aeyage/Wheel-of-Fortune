@@ -12,10 +12,12 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.BorderLayout;
+// import java.util.*;
 
 
 public class Game extends JFrame implements ActionListener 
 {
+
     private String[] secretWord = {"T","H","E","  ",
                                     "S","E","C","R","E","T","  ",
                                     "L","I","F","E","  ",
@@ -30,9 +32,11 @@ public class Game extends JFrame implements ActionListener
     private JLabel player1Label = new JLabel(" ");
     private JLabel guessedWordLabel = new JLabel(" ");
 
+    Player player1 = new Player(1);
+    Wheel fortuneWheel = new Wheel();
+
     public Game() 
     {
-
         setTitle("Guess the Secret Word");
         setSize(650, 300);
         setLayout(new BorderLayout());
@@ -70,7 +74,7 @@ public class Game extends JFrame implements ActionListener
         guessedWordLabel.setHorizontalAlignment(JLabel.CENTER);
         add(guessedWordLabel, BorderLayout.CENTER);
         
-        player1Label.setText("Player 1 :     ");
+        player1Label.setText("Player 1 : " + player1.getTotal());
         add(player1Label, BorderLayout.NORTH);
         player1Label.setHorizontalAlignment(JLabel.RIGHT);
         add(keyboardPanel, BorderLayout.SOUTH);
@@ -88,7 +92,13 @@ public class Game extends JFrame implements ActionListener
         spinButton.addActionListener(new ActionListener() 
         {
             public void actionPerformed(ActionEvent e) 
-            {
+            {   
+
+                fortuneWheel.spin();
+                int spinValue = fortuneWheel.getWheelValue();
+                player1.setTotal(spinValue);
+                player1Label.setText("Player 1 : " + player1.getTotal());
+
                 for (int j = 0; j < buttons.length; j++) 
                 {
                     boolean isDisabled = false;
