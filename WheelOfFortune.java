@@ -1,205 +1,354 @@
-import java.util.*;
-public class WheelOfFortune 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import javax.swing.BoxLayout;
+
+public class WheelOfFortune extends JFrame implements ActionListener 
 {
-	
-	//Creates a new board
-	private static GameBoard fortuneBoard = new GameBoard("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 
-					"The Secret Life of Bees", "Movies"); 
-	
-	public static void displayBoard()
+    // Array containing characters of the secret word in order
+    private String[] secretWord = {"T","H","E","  ",
+                                    "S","E","C","R","E","T","  ",
+                                    "L","I","F","E","  ",
+                                    "O","F","  ",
+                                    "B","E","E","S"};
+    // Array containing empty spaces for users to guess the secret word
+    private String[] guessedWord = {"_","_","_","  ",
+                                    "_","_","_","_","_","_","  ",
+                                    "_","_","_","_","  ",
+                                    "_","_","  ",
+                                    "_","_","_","_"};
+
+    // Create labels                                
+    private JLabel player1Label = new JLabel(" ");
+    private JLabel player2Label = new JLabel(" ");
+    private JLabel guessedWordLabel = new JLabel(" ");
+    private JLabel turnLabel = new JLabel("");
+
+
+    private boolean player1turn = true;  // Keep track of player's turn
+    private int spinValue;               // Store the value from the wheel spin
+
+    // Create objects
+    Player player1 = new Player();
+    Player player2 = new Player();
+    Wheel fortuneWheel = new Wheel();
+
+    public WheelOfFortune() 
+    {
+        setTitle("Wheel Of Fortune");
+        setSize(650, 300);
+        setLayout(new BorderLayout());
+
+        JPanel keyboardPanel = new JPanel();
+        keyboardPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(5, 5, 5, 5);
+        c.fill = GridBagConstraints.BOTH;
+
+        // Array of keys to be added to keyboard GUI
+        String[][] keys = 
+        {
+            {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
+            {" ","A", "S", "D", "F", "G", "H", "J", "K", "L"," "},
+            {" ", " ", "Z", "X", "C", "V", "B", "N", "M"}
+        };
+                
+        // Create an array of JButtons with the same number of elements as the total number of keys
+        JButton[] buttons = new JButton[keys.length*keys[0].length];
+        
+        int count = 0;
+        // Iterate through each row of keys
+        for (int i = 0; i < keys.length; i++) 
+        { 
+            // Iterate through each key in the current row
+            for (int j = 0; j < keys[i].length; j++) 
+            {
+                // Create a new JButton with the label of the current key
+                buttons[count] = new JButton(keys[i][j]);
+                // If the key is a space, set the button to not be visible
+                if(keys[i][j] == " ")
+                {
+                    buttons[count].setVisible(false);
+                }
+                // Add an ActionListener to the button
+                buttons[count].addActionListener(this);
+                // Disable the button
+                buttons[count].setEnabled(false);
+                // Set the button's position in the keyboard panel using a GridBagConstraints object
+                c.gridx = j;
+                c.gridy = i;
+                keyboardPanel.add(buttons[count], c);
+
+                count++;
+            }
+        }
+        
+        add(keyboardPanel, BorderLayout.SOUTH);
+        
+        guessedWordLabel.setHorizontalAlignment(JLabel.CENTER);
+        guessedWordLabel.setText(String.join(" ", guessedWord));
+        add(guessedWordLabel, BorderLayout.CENTER);
+        
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+
+        player1Label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        player2Label.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        turnLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        topPanel.add(player1Label);
+        topPanel.add(player2Label);
+        topPanel.add(turnLabel);
+        add(topPanel, BorderLayout.NORTH);
+
+        // Display Player 1 and Player 2 with their total amount of money
+        player1Label.setText("Player 1 :   " + player1.getTotal() + "        ");
+        player2Label.setText("Player 2 :   " + player2.getTotal() + "        ");
+
+        // Display to indicate which player's turn 
+        turnLabel.setText("Player 1's Turn");
+        
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+
+        // Create a spin button
+        JButton spinButton = new JButton("SPIN");
+        spinButton.setBounds(500, 250, 75, 25);
+        keyboardPanel.add(spinButton);
+        
+        // Dynamic array to keep track of pressed keys
+        List<String> pressedAlphabets = new ArrayList<>();
+
+        // Add actionListener to spin button
+        spinButton.addActionListener(new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e) 
+            {                   
+                // Spin the wheel to get a random value
+                fortuneWheel.spin();
+                spinValue = fortuneWheel.getWheelValue();
+
+                // If it is player 1's turn
+                if(player1turn)
+                {   
+                    // Player 1 lose a turn and cannot guess
+                    if(spinValue == 0)
+                    {
+                        // Display lose turn message
+                        JOptionPane.showMessageDialog(null, "Player 1 lose a turn!","Uh Oh!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        // Change turn
+                        player1turn = false;
+                        turnLabel.setText("Player 2's Turn");
+
+                    } 
+                    else if(spinValue == -100) // Player 1 bankrupts, lose all money
+                    {
+                        // Set player 1's total money to zero
+                        player1.setTotal(-100);
+                        // Display bankruptcy message
+                        JOptionPane.showMessageDialog(null, "Player 1 hit bankruptcy!","Oh No!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        // Change turn
+                        player1turn = false;
+                        player1Label.setText("Player 1 : " + player1.getTotal() + "   ");
+                        turnLabel.setText("Player 2's Turn");
+
+                    } 
+                    else // Player 1 gets an amount of money
+                    {
+                        // Set player 1 total money
+                        player1.setTotal(spinValue);
+                        player1Label.setText("Player 1 : " + player1.getTotal() + "   ");
+                        //change turn
+                        player1turn = false;
+
+                        // Loop to make all the buttons that have been pressed disabled and vice versa
+                        for (int j = 0; j < buttons.length; j++) 
+                        {
+                            boolean isDisabled = false;
+                            for(int i = 0; i < pressedAlphabets.size(); i++)
+                            {
+                                if(buttons[j].getText().equals(pressedAlphabets.get(i)))
+                                {
+                                    isDisabled = true;
+                                    break;
+                                }
+                            }
+                            buttons[j].setEnabled(!isDisabled);
+                        }
+
+                        // Make spin button disabled once pressed
+                        spinButton.setEnabled(false);
+                    }
+                } 
+                else // If it is player 2's turn
+                {
+                    // Player 2 lose a turn and cannot guess
+                    if(spinValue == 0)
+                    {
+                        // Display lose turn message
+                        JOptionPane.showMessageDialog(null, "Player 2 lose a turn!","OH NO!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        // Change turn
+                        player1turn = true;
+                        turnLabel.setText("Player 1's Turn");
+
+                    } 
+                    else if(spinValue == -100) // Player 2 bankrupts, lose all money
+                    {
+                        // Set player 1's total money to zero
+                        player2.setTotal(-100);
+                        // Display bankrupt message
+                        JOptionPane.showMessageDialog(null, "Player 2 hit bankruptcy!","Oh No!", 
+                        JOptionPane.PLAIN_MESSAGE);
+                        // Change turn
+                        player1turn = true;
+                        player2Label.setText("Player 2 : " + player2.getTotal() + "   ");
+                        turnLabel.setText("Player 1's Turn");
+
+                    } 
+                    else // Player 2 gets an amount of money
+                    {
+                        // Set player 2 total money
+                        player2.setTotal(spinValue);
+                        player2Label.setText("Player 2 : " + player2.getTotal() + "   ");
+                        // Change turn
+                        player1turn = true;
+
+                        // Loop to make all the buttons that have been pressed disabled and vice versa
+                        for (int j = 0; j < buttons.length; j++) 
+                        {
+                            boolean isDisabled = false;
+                            for(int i = 0; i < pressedAlphabets.size(); i++)
+                            {
+                                if(buttons[j].getText().equals(pressedAlphabets.get(i)))
+                                {
+                                    isDisabled = true;
+                                    break;
+                                }
+                            }
+                            buttons[j].setEnabled(!isDisabled);
+                        }
+                        // Disable spin button once pressed
+                        spinButton.setEnabled(false);
+                    }
+                }
+
+            }     
+        });
+
+        // Loop to add actionListener to each buttons
+        for (int i = 0; i < buttons.length; i++) 
+        {
+            buttons[i].addActionListener(new ActionListener() 
+            {
+                public void actionPerformed(ActionEvent e) 
+                {
+                    // Set the turnLabel text according to current player's turn
+                    if (player1turn) 
+                    {
+                        turnLabel.setText("Player 1's Turn");
+                    } 
+                    else 
+                    {
+                        turnLabel.setText("Player 2's Turn");
+                    } 
+
+                    JButton button = (JButton) e.getSource();  // Determine which button is pressed
+                    String pressedButton = button.getText();   // Store the character held by the pressed button
+                    boolean isCorrect = false;                 // Indicate if guess is correct
+                    
+                    pressedAlphabets.add(pressedButton);       // Add the character to pressedButton array
+
+                    // Loop to check whether the secret word contains the guessed character
+                    for (int i = 0; i < secretWord.length; i++)
+                    {
+                        // If the guess is correct
+                        if (pressedButton == secretWord[i])
+                        {
+                            isCorrect = true;
+
+                            // Add the correct guessed character to guessedWord array at it's true position
+                            for (int j = 0; j < secretWord.length; j++)
+                            {
+                                if (pressedButton == secretWord[j])
+                                {
+                                    guessedWord[j] = pressedButton;
+                                } 
+                            }
+                            // Reset the guessedWordLabel to include correct guesses
+                            guessedWordLabel.setText(String.join(" ", guessedWord));
+
+                            // Disable the buttons once one of them is pressed
+                            button.setEnabled(false);
+                            break;
+                        }  
+                    }
+                    
+                    // Player only get to keep money from spin from current turn if correct guess 
+                    if (!isCorrect)
+                    {
+                        if(!player1turn)
+                        {
+                            player1.revertTotal(spinValue);
+                            player1Label.setText("Player 1 : " + player1.getTotal() + "   ");
+                        } else
+                        {
+                            player2.revertTotal(spinValue);
+                            player2Label.setText("Player 2 : " + player2.getTotal() + "   ");
+                        }
+                    }
+                    
+                    // Determine whether all characters has been guessed correctly
+                    if (Arrays.equals(guessedWord, secretWord)) 
+                    {
+                        // Check the winner, last player to complete the word wins
+                        if(player1turn)
+                        {
+                            JOptionPane.showMessageDialog(null, "Player 1 wins!", "Congratulations!", 
+                            JOptionPane.PLAIN_MESSAGE);
+                        } 
+                        else 
+                        {
+                            JOptionPane.showMessageDialog(null, "Player 2 wins!", "Congratulations!", 
+                            JOptionPane.PLAIN_MESSAGE);
+                        }
+                    }
+                    
+                    // Loop to set disable all buttons once one of them is pressed
+                    for (int j = 0; j < buttons.length; j++)
+                    {
+                        buttons[j].setEnabled(false);  
+                    }
+                    // Enable spin button once guess has been made
+                    spinButton.setEnabled(true); 
+                } 
+            });
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) 
+    {
+
+    }
+
+    public static void main (String [] args) 
 	{
-		
-		//Display available letters
-		fortuneBoard.displayLetters();
-				
-		//Update puzzle
-		fortuneBoard.updatePuzzle();
-				
-		//Display updated puzzle
-		fortuneBoard.displayPuzzle();	
-		
+		new WheelOfFortune();
 	}
-	
-	public static void play (Player player) 
-	{
-		Wheel fortuneWheel = new Wheel();
-		int playerChoice=-1;
-		boolean goAgain = true, puzzleSolved=false;
-		Scanner keyboard; 
-		
-		/*This while executes under the condition that it is still the player's turn AND
-		 *the puzzle is not yet solved. It will not execute if either the players turn has ended OR
-		 *the puzzle was solved during the players turn
-		 */
-		while (goAgain && !puzzleSolved)
-		{
-			
-			boolean wasGuessed=false;
-			
-			/*This do-while loop prompts the player to spin (1) or guess(2) and continues to 
-			 * loop while the player's input is not either 1 or 2
-			 */
-			do 
-			{
-				keyboard = new Scanner(System.in);
-				
-				/*this try-catch block handles the InputMismatchException thrown by Scanner's
-				 * nextInt() method
-				 */
-				try 
-				{
-					//Prompts player to spin (1) or guess (2)
-					System.out.print("Player " + player.getPlayerNumber() + " - would you like to Spin (1)"
-						+ " or Guess (2) the puzzle? ");
-					
-					//Assigns player's input to variable
-					playerChoice = keyboard.nextInt();
-					
-				}
-				catch (InputMismatchException e)
-				{
-					//Assigns -1 to variable to prompt another loop iteration
-					playerChoice=-1;
-					
-				}
-				
-			} while(playerChoice != 1 && playerChoice!=2);
-			
-			if (playerChoice == 1)
-			{
-				//Spins the wheel
-				fortuneWheel.spin();
-				
-				/*This if-else block executes when the player lands on a wheel value 
-				 *greater than 0.0
-				 */
-				if (fortuneWheel.getWheelValue()>0.0) 
-				{
-					
-					/*This do-while loop will execute as long as the player is guessing
-					 * a letter that has already been guessed
-					 */
-					do 
-					{
-						//Prompts player to select a letter
-						System.out.print("Select your letter from the available letters from above: ");
-					
-						//Gets player guess
-						player.setPlayerGuess(keyboard.next().charAt(0)); 
-					
-						//Checks that the letter has not been guessed
-						wasGuessed = fortuneBoard.isLetterGuessed(player.getPlayerGuess());
-						
-					} while (wasGuessed);
-					
-					/* Play the current letter on the board. 
-					 * The validity of the letter has not been checked at this point
-					 * Code has only checked that the letter is not a duplicate guess at this point
-					 */
-					fortuneBoard.setCharacter(player.getPlayerGuess());
-					
-					System.out.println();
-					
-					//Removes the current letter on the board from the list of available letters
-					fortuneBoard.updateAvailableLetters();
-					
-					/* Now checking if current letter is in the puzzle
-					 * If the player guesses a letter that is in the puzzle, player can go again
-					 * else the player's turn terminates
-					 */
-					if (fortuneBoard.isLetterInPuzzle(player.getPlayerGuess()))
-						displayBoard();
-					else 
-					{
-						goAgain = false;
-						System.out.println("Incorrect!");
-						System.out.println();
-					}
-	
-				}
-				else
-				{
-					//If wheel value is less than 0, turn terminates
-					goAgain = false;
-				}
-			}
-			else
-			{
-				System.out.print("Please Enter Your Guess: ");
-				keyboard = new Scanner(System.in);
-				String playerGuess = keyboard.nextLine().trim();
-				
-				if (!playerGuess.equalsIgnoreCase(fortuneBoard.getPuzzle())) 
-				{
-					System.out.println("\nIncorrect!\n");
-					goAgain = false;
-				}
-				
-				else 
-				{
-					fortuneBoard.setPendingPuzzle(playerGuess);
-				}	
-				
-			}
-			
-			/*Checks whether the puzzle has been solved
-			 *Prints congratulatory message if puzzle is solved and terminates turn
-			 */
-			if (checkSolved())
-			{
-				
-				goAgain = false;
-				System.out.println("Congratulations! You Solved the Puzzle!\n"+
-							"Player " + player.getPlayerNumber()+ " Wins!");
-			}
-		}
-		
-	}//End Play
-	
-	public static boolean checkSolved()
-	{
-		boolean solved;
-		solved = fortuneBoard.getPendingPuzzle().equalsIgnoreCase(fortuneBoard.getPuzzle());
-		
-		return solved;
-	}
-	
-	public static void main (String [] args) 
-	{
-		Scanner input = new Scanner (System.in);
-
-		//Prints welcome message
-		System.out.println("Welcome to the Wheel of Fortune\n");
-		System.out.println("How many players will be playing?");
-		int x = input.nextInt();
-
-		int value = x + 1;
-
-		Player[] player = new Player[value];
-
-		for (int i = 1; i < value; i++)
-		{
-			player[i] = new Player(i);
-		}
-
-		// //Creates 3 new players
-		// Player player1 = new Player(1);
-		// Player player2 = new Player(2);
-		// Player player3 = new Player(3);
-		
-		do
-		{
-			for (int j = 1; j < value; j++)
-			{
-				displayBoard();
-				play(player[j]);
-				
-					if (checkSolved())
-						break;
-			}
-			input.close();
-
-	} while(!checkSolved());
-	}
-	
+    
 }
